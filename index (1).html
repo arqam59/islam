@@ -1,0 +1,984 @@
+<!doctype html>
+<html lang="en" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Islamic Knowledge Portal</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&amp;family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; }
+    html, body { height: 100%; margin: 0; padding: 0; }
+    
+    .app-wrapper {
+      min-height: 100%;
+      width: 100%;
+      font-family: 'Inter', sans-serif;
+    }
+    
+    .heading-font {
+      font-family: 'Playfair Display', serif;
+    }
+    
+    .gradient-overlay {
+      background: linear-gradient(135deg, rgba(0, 77, 64, 0.95) 0%, rgba(0, 105, 92, 0.9) 50%, rgba(0, 137, 123, 0.85) 100%);
+    }
+    
+    .card-hover {
+      transition: all 0.3s ease;
+    }
+    
+    .card-hover:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    }
+    
+    .nav-link {
+      position: relative;
+      transition: color 0.3s ease;
+    }
+    
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: #00897b;
+      transition: width 0.3s ease;
+    }
+    
+    .nav-link:hover::after {
+      width: 100%;
+    }
+    
+    .dropdown-menu {
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-10px);
+      transition: all 0.3s ease;
+      pointer-events: none;
+    }
+    
+    .dropdown-group:hover .dropdown-menu {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+    
+    .dropdown-item {
+      transition: all 0.2s ease;
+    }
+    
+    .dropdown-item:hover {
+      padding-left: 1.25rem;
+    }
+    
+    .islamic-pattern {
+      background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M30 0l30 30-30 30L0 30z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    }
+    
+    .category-icon {
+      width: 60px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 12px;
+      font-size: 28px;
+      margin-bottom: 16px;
+    }
+    
+    .scroll-indicator {
+      animation: bounce 2s infinite;
+    }
+    
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+      40% { transform: translateY(-10px); }
+      60% { transform: translateY(-5px); }
+    }
+    
+    .fade-in {
+      animation: fadeIn 0.6s ease-out forwards;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .mobile-menu {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+    }
+    
+    .mobile-menu.open {
+      max-height: 600px;
+    }
+    
+    .mobile-submenu {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+    }
+    
+    .mobile-submenu.open {
+      max-height: 300px;
+    }
+  </style>
+  <style>body { box-sizing: border-box; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+ </head>
+ <body class="h-full">
+  <div class="app-wrapper bg-gray-50 overflow-auto"><!-- Top Bar -->
+   <div id="top-bar" class="bg-teal-800 text-white text-sm py-2">
+    <div class="max-w-7xl mx-auto px-4 flex justify-between items-center">
+     <div class="flex items-center gap-4"><span>📧 contact@example.com</span> <span class="hidden sm:inline">📞 +1 234 567 890</span>
+     </div>
+     <div class="flex items-center gap-3"><a href="#" class="hover:text-teal-200 transition-colors">English</a> <span class="text-teal-400">•</span> <a href="#" class="hover:text-teal-200 transition-colors">العربية</a> <span class="text-teal-400">•</span> <button id="admin-btn" class="hover:text-teal-200 transition-colors text-xs font-semibold">Admin</button>
+     </div>
+    </div>
+   </div><!-- Header -->
+   <header id="main-header" class="bg-white shadow-md sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4">
+     <div class="flex justify-between items-center h-20"><!-- Logo -->
+      <div class="flex items-center gap-3">
+       <div class="w-12 h-12 bg-teal-700 rounded-xl flex items-center justify-center">
+        <svg viewbox="0 0 100 100" class="w-8 h-8 text-white" fill="currentColor"><path d="M50 10 L90 50 L50 90 L10 50 Z M50 25 L75 50 L50 75 L25 50 Z" /> <circle cx="50" cy="50" r="10" />
+        </svg>
+       </div>
+       <div>
+        <h1 id="site-title" class="text-xl font-bold text-teal-800 heading-font">Islamic Portal</h1>
+        <p class="text-xs text-gray-500">Knowledge &amp; Learning</p>
+       </div>
+      </div><!-- Desktop Navigation with Dropdowns -->
+      <nav class="hidden lg:flex items-center gap-1"><a href="#home" class="nav-link px-4 py-2 text-gray-700 hover:text-teal-700 font-medium">Home</a> <!-- Articles Dropdown -->
+       <div class="dropdown-group relative"><button class="nav-link px-4 py-2 text-gray-700 hover:text-teal-700 font-medium flex items-center gap-1"> Articles 
+         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7" />
+         </svg></button>
+        <div class="dropdown-menu absolute top-full left-0 mt-2 w-56 bg-white rounded-xl shadow-xl border border-gray-100"><a href="#" class="dropdown-item block px-6 py-3 text-gray-700 hover:bg-teal-50 hover:text-teal-700 border-b border-gray-100">📖 Quran &amp; Tafsir</a> <a href="#" class="dropdown-item block px-6 py-3 text-gray-700 hover:bg-teal-50 hover:text-teal-700 border-b border-gray-100">📚 Hadith Studies</a> <a href="#" class="dropdown-item block px-6 py-3 text-gray-700 hover:bg-teal-50 hover:text-teal-700 border-b border-gray-100">⚖️ Islamic Law</a> <a href="#" class="dropdown-item block px-6 py-3 text-gray-700 hover:bg-teal-50 hover:text-teal-700 border-b border-gray-100">💎 Spirituality</a> <a href="#" class="dropdown-item block px-6 py-3 text-gray-700 hover:bg-teal-50 hover:text-teal-700 text-sm font-semibold text-teal-600">→ View All Articles</a>
+        </div>
+       </div><!-- Scholars Dropdown -->
+       <div class="dropdown-group relative"><button class="nav-link px-4 py-2 text-gray-700 hover:text-teal-700 font-medium flex items-center gap-1"> Scholars 
+         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7" />
+         </svg></button>
+        <div class="dropdown-menu absolute top-full left-0 mt-2 w-56 bg-white rounded-xl shadow-xl border border-gray-100"><a href="#" class="dropdown-item block px-6 py-3 text-gray-700 hover:bg-teal-50 hover:text-teal-700 border-b border-gray-100">👥 Contemporary Scholars</a> <a href="#" class="dropdown-item block px-6 py-3 text-gray-700 hover:bg-teal-50 hover:text-teal-700 border-b border-gray-100">📜 Classical Scholars</a> <a href="#" class="dropdown-item block px-6 py-3 text-gray-700 hover:bg-teal-50 hover:text-teal-700 border-b border-gray-100">🌍 By Country</a> <a href="#" class="dropdown-item block px-6 py-3 text-gray-700 hover:bg-teal-50 hover:text-teal-700 text-sm font-semibold text-teal-600">→ Scholar Directory</a>
+        </div>
+       </div><!-- Fatwas Dropdown -->
+       <div class="dropdown-group relative"><button class="nav-link px-4 py-2 text-gray-700 hover:text-teal-700 font-medium flex items-center gap-1"> Fatwas 
+         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7" />
+         </svg></button>
+        <div class="dropdown-menu absolute top-full left-0 mt-2 w-56 bg-white rounded-xl shadow-xl border border-gray-100"><a href="#" class="dropdown-item block px-6 py-3 text-gray-700 hover:bg-teal-50 hover:text-teal-700 border-b border-gray-100">🏠 Daily Life</a> <a href="#" class="dropdown-item block px-6 py-3 text-gray-700 hover:bg-teal-50 hover:text-teal-700 border-b border-gray-100">🙏 Worship</a> <a href="#" class="dropdown-item block px-6 py-3 text-gray-700 hover:bg-teal-50 hover:text-teal-700 border-b border-gray-100">👨‍👩‍👧‍👦 Family &amp; Marriage</a> <a href="#ask-questions" class="dropdown-item block px-6 py-3 text-gray-700 hover:bg-teal-50 hover:text-teal-700 border-b border-gray-100">❓ Ask a Question</a> <a href="#answered-section" class="dropdown-item block px-6 py-3 text-gray-700 hover:bg-teal-50 hover:text-teal-700 border-b border-gray-100">✅ Answered Questions</a> <a href="#" class="dropdown-item block px-6 py-3 text-gray-700 hover:bg-teal-50 hover:text-teal-700 text-sm font-semibold text-teal-600">→ Browse All Fatwas</a>
+        </div>
+       </div><!-- Media Dropdown -->
+       <div class="dropdown-group relative"><button class="nav-link px-4 py-2 text-gray-700 hover:text-teal-700 font-medium flex items-center gap-1"> Media 
+         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7" />
+         </svg></button>
+        <div class="dropdown-menu absolute top-full left-0 mt-2 w-56 bg-white rounded-xl shadow-xl border border-gray-100"><a href="#" class="dropdown-item block px-6 py-3 text-gray-700 hover:bg-teal-50 hover:text-teal-700 border-b border-gray-100">🎬 Video Lectures</a> <a href="#" class="dropdown-item block px-6 py-3 text-gray-700 hover:bg-teal-50 hover:text-teal-700 border-b border-gray-100">🎙️ Podcasts</a> <a href="#" class="dropdown-item block px-6 py-3 text-gray-700 hover:bg-teal-50 hover:text-teal-700 border-b border-gray-100">📖 Books &amp; PDFs</a> <a href="#" class="dropdown-item block px-6 py-3 text-gray-700 hover:bg-teal-50 hover:text-teal-700 text-sm font-semibold text-teal-600">→ All Media</a>
+        </div>
+       </div><a href="#about" class="nav-link px-4 py-2 text-gray-700 hover:text-teal-700 font-medium">About</a>
+      </nav><!-- Search &amp; Mobile Menu -->
+      <div class="flex items-center gap-4"><button id="search-btn" class="p-2 text-gray-600 hover:text-teal-700 hover:bg-teal-50 rounded-lg transition-colors">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+        </svg></button> <button id="mobile-menu-btn" class="lg:hidden p-2 text-gray-600 hover:text-teal-700 hover:bg-teal-50 rounded-lg transition-colors">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+        </svg></button>
+      </div>
+     </div><!-- Mobile Menu with Dropdowns -->
+     <div id="mobile-menu" class="mobile-menu lg:hidden border-t">
+      <nav class="py-4 flex flex-col gap-0"><a href="#home" class="px-4 py-3 text-gray-700 hover:bg-teal-50 hover:text-teal-700 font-medium">Home</a> <!-- Articles Mobile Dropdown -->
+       <div><button id="articles-toggle" class="w-full text-left px-4 py-3 text-gray-700 hover:bg-teal-50 hover:text-teal-700 font-medium flex items-center justify-between"> Articles 
+         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7" />
+         </svg></button>
+        <div id="articles-submenu" class="mobile-submenu bg-gray-50"><a href="#" class="block px-8 py-2 text-gray-600 hover:text-teal-700 hover:bg-teal-50 text-sm">Quran &amp; Tafsir</a> <a href="#" class="block px-8 py-2 text-gray-600 hover:text-teal-700 hover:bg-teal-50 text-sm">Hadith Studies</a> <a href="#" class="block px-8 py-2 text-gray-600 hover:text-teal-700 hover:bg-teal-50 text-sm">Islamic Law</a> <a href="#" class="block px-8 py-2 text-gray-600 hover:text-teal-700 hover:bg-teal-50 text-sm">Spirituality</a>
+        </div>
+       </div><!-- Scholars Mobile Dropdown -->
+       <div><button id="scholars-toggle" class="w-full text-left px-4 py-3 text-gray-700 hover:bg-teal-50 hover:text-teal-700 font-medium flex items-center justify-between"> Scholars 
+         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7" />
+         </svg></button>
+        <div id="scholars-submenu" class="mobile-submenu bg-gray-50"><a href="#" class="block px-8 py-2 text-gray-600 hover:text-teal-700 hover:bg-teal-50 text-sm">Contemporary Scholars</a> <a href="#" class="block px-8 py-2 text-gray-600 hover:text-teal-700 hover:bg-teal-50 text-sm">Classical Scholars</a> <a href="#" class="block px-8 py-2 text-gray-600 hover:text-teal-700 hover:bg-teal-50 text-sm">By Country</a>
+        </div>
+       </div><!-- Fatwas Mobile Dropdown -->
+       <div><button id="fatwas-toggle" class="w-full text-left px-4 py-3 text-gray-700 hover:bg-teal-50 hover:text-teal-700 font-medium flex items-center justify-between"> Fatwas 
+         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7" />
+         </svg></button>
+        <div id="fatwas-submenu" class="mobile-submenu bg-gray-50"><a href="#" class="block px-8 py-2 text-gray-600 hover:text-teal-700 hover:bg-teal-50 text-sm">Daily Life</a> <a href="#" class="block px-8 py-2 text-gray-600 hover:text-teal-700 hover:bg-teal-50 text-sm">Worship</a> <a href="#" class="block px-8 py-2 text-gray-600 hover:text-teal-700 hover:bg-teal-50 text-sm">Family &amp; Marriage</a> <a href="#ask-questions" class="block px-8 py-2 text-gray-600 hover:text-teal-700 hover:bg-teal-50 text-sm">Ask a Question</a> <a href="#answered-section" class="block px-8 py-2 text-gray-600 hover:text-teal-700 hover:bg-teal-50 text-sm">Answered Questions</a>
+        </div>
+       </div><!-- Media Mobile Dropdown -->
+       <div><button id="media-toggle" class="w-full text-left px-4 py-3 text-gray-700 hover:bg-teal-50 hover:text-teal-700 font-medium flex items-center justify-between"> Media 
+         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7" />
+         </svg></button>
+        <div id="media-submenu" class="mobile-submenu bg-gray-50"><a href="#" class="block px-8 py-2 text-gray-600 hover:text-teal-700 hover:bg-teal-50 text-sm">Video Lectures</a> <a href="#" class="block px-8 py-2 text-gray-600 hover:text-teal-700 hover:bg-teal-50 text-sm">Podcasts</a> <a href="#" class="block px-8 py-2 text-gray-600 hover:text-teal-700 hover:bg-teal-50 text-sm">Books &amp; PDFs</a>
+        </div>
+       </div><a href="#about" class="px-4 py-3 text-gray-700 hover:bg-teal-50 hover:text-teal-700 font-medium">About</a>
+      </nav>
+     </div>
+    </div>
+   </header><!-- Hero Section -->
+   <section id="hero" class="relative gradient-overlay islamic-pattern py-20 lg:py-32">
+    <div class="max-w-7xl mx-auto px-4 text-center text-white relative z-10">
+     <div class="fade-in">
+      <h2 id="hero-title" class="text-4xl lg:text-6xl font-bold heading-font mb-6 leading-tight">Light of Knowledge</h2>
+      <p id="hero-subtitle" class="text-xl lg:text-2xl opacity-90 mb-10 max-w-3xl mx-auto leading-relaxed">A comprehensive platform for authentic Islamic content from scholars and thinkers</p>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center"><button class="px-8 py-4 bg-white text-teal-800 rounded-xl font-bold hover:bg-teal-50 transition-colors shadow-lg"> Browse Articles </button> <a href="#ask-questions" class="px-8 py-4 bg-transparent border-2 border-white text-white rounded-xl font-bold hover:bg-white/10 transition-colors inline-block text-center"> Ask a Question </a>
+      </div>
+     </div><!-- Scroll Indicator -->
+     <div class="scroll-indicator mt-16">
+      <svg class="w-8 h-8 mx-auto text-white/70" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+      </svg>
+     </div>
+    </div><!-- Decorative Elements -->
+    <div class="absolute top-10 right-10 w-20 h-20 border-2 border-white/20 rounded-full"></div>
+    <div class="absolute bottom-10 left-10 w-32 h-32 border-2 border-white/10 rounded-full"></div>
+   </section><!-- Categories Section -->
+   <section class="py-16 bg-white">
+    <div class="max-w-7xl mx-auto px-4">
+     <div class="text-center mb-12">
+      <h3 class="text-3xl font-bold text-gray-800 heading-font mb-4">Main Categories</h3>
+      <p class="text-gray-600 max-w-2xl mx-auto">Explore a wide range of diverse Islamic topics and subjects</p>
+     </div>
+     <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6"><!-- Category 1 -->
+      <div class="card-hover bg-gradient-to-br from-teal-50 to-teal-100 rounded-2xl p-6 text-center cursor-pointer">
+       <div class="category-icon bg-teal-600 text-white mx-auto">
+        📖
+       </div>
+       <h4 class="font-bold text-gray-800 mb-2">Quran</h4>
+       <p class="text-sm text-gray-600">Tafsir &amp; Tajweed</p>
+      </div><!-- Category 2 -->
+      <div class="card-hover bg-gradient-to-br from-amber-50 to-amber-100 rounded-2xl p-6 text-center cursor-pointer">
+       <div class="category-icon bg-amber-600 text-white mx-auto">
+        🕌
+       </div>
+       <h4 class="font-bold text-gray-800 mb-2">Hadith</h4>
+       <p class="text-sm text-gray-600">Explanation &amp; Analysis</p>
+      </div><!-- Category 3 -->
+      <div class="card-hover bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl p-6 text-center cursor-pointer">
+       <div class="category-icon bg-blue-600 text-white mx-auto">
+        ⚖️
+       </div>
+       <h4 class="font-bold text-gray-800 mb-2">Fiqh</h4>
+       <p class="text-sm text-gray-600">Islamic Jurisprudence</p>
+      </div><!-- Category 4 -->
+      <div class="card-hover bg-gradient-to-br from-purple-50 to-purple-100 rounded-2xl p-6 text-center cursor-pointer">
+       <div class="category-icon bg-purple-600 text-white mx-auto">
+        💎
+       </div>
+       <h4 class="font-bold text-gray-800 mb-2">Aqeedah</h4>
+       <p class="text-sm text-gray-600">Islamic Belief</p>
+      </div><!-- Category 5 -->
+      <div class="card-hover bg-gradient-to-br from-rose-50 to-rose-100 rounded-2xl p-6 text-center cursor-pointer">
+       <div class="category-icon bg-rose-600 text-white mx-auto">
+        ❤️
+       </div>
+       <h4 class="font-bold text-gray-800 mb-2">Tazkiyah</h4>
+       <p class="text-sm text-gray-600">Spirituality &amp; Ethics</p>
+      </div><!-- Category 6 -->
+      <div class="card-hover bg-gradient-to-br from-green-50 to-green-100 rounded-2xl p-6 text-center cursor-pointer">
+       <div class="category-icon bg-green-600 text-white mx-auto">
+        📚
+       </div>
+       <h4 class="font-bold text-gray-800 mb-2">Seerah</h4>
+       <p class="text-sm text-gray-600">Prophetic Biography</p>
+      </div>
+     </div>
+    </div>
+   </section><!-- Featured Articles -->
+   <section class="py-16 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4">
+     <div class="flex justify-between items-center mb-12">
+      <div>
+       <h3 class="text-3xl font-bold text-gray-800 heading-font mb-2">Latest Articles</h3>
+       <p class="text-gray-600">Curated articles from top scholars and writers</p>
+      </div><button class="hidden sm:flex items-center gap-2 px-6 py-3 bg-teal-700 text-white rounded-xl hover:bg-teal-800 transition-colors"> <span>View All</span>
+       <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+       </svg></button>
+     </div>
+     <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8"><!-- Article Card 1 -->
+      <article class="card-hover bg-white rounded-2xl overflow-hidden shadow-sm">
+       <div class="h-48 bg-gradient-to-br from-teal-600 to-teal-800 flex items-center justify-center">
+        <svg class="w-16 h-16 text-white/80" viewbox="0 0 100 100" fill="currentColor"><rect x="20" y="15" width="60" height="70" rx="5" fill="none" stroke="currentColor" stroke-width="4" /> <line x1="30" y1="35" x2="70" y2="35" stroke="currentColor" stroke-width="3" /> <line x1="30" y1="50" x2="70" y2="50" stroke="currentColor" stroke-width="3" /> <line x1="30" y1="65" x2="55" y2="65" stroke="currentColor" stroke-width="3" />
+        </svg>
+       </div>
+       <div class="p-6">
+        <div class="flex items-center gap-2 mb-3"><span class="px-3 py-1 bg-teal-100 text-teal-700 text-xs font-medium rounded-full">Quran</span> <span class="text-gray-400 text-sm">3 days ago</span>
+        </div>
+        <h4 class="text-lg font-bold text-gray-800 mb-3 leading-relaxed">The Virtues of Reciting the Holy Quran</h4>
+        <p class="text-gray-600 text-sm mb-4 line-clamp-2">Discover the proper etiquette for reciting the Quran and the great rewards that the reader receives...</p>
+        <div class="flex items-center justify-between">
+         <div class="flex items-center gap-2">
+          <div class="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center text-sm">
+           👤
+          </div><span class="text-sm text-gray-600">Sheikh Muhammad</span>
+         </div><button class="text-teal-700 hover:text-teal-800 font-medium text-sm flex items-center gap-1"> Read More 
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+          </svg></button>
+        </div>
+       </div>
+      </article><!-- Article Card 2 -->
+      <article class="card-hover bg-white rounded-2xl overflow-hidden shadow-sm">
+       <div class="h-48 bg-gradient-to-br from-amber-500 to-amber-700 flex items-center justify-center">
+        <svg class="w-16 h-16 text-white/80" viewbox="0 0 100 100" fill="currentColor"><path d="M50 15 L85 40 L85 75 Q50 95 15 75 L15 40 Z" fill="none" stroke="currentColor" stroke-width="4" /> <circle cx="50" cy="55" r="15" fill="none" stroke="currentColor" stroke-width="3" />
+        </svg>
+       </div>
+       <div class="p-6">
+        <div class="flex items-center gap-2 mb-3"><span class="px-3 py-1 bg-amber-100 text-amber-700 text-xs font-medium rounded-full">Fiqh</span> <span class="text-gray-400 text-sm">5 days ago</span>
+        </div>
+        <h4 class="text-lg font-bold text-gray-800 mb-3 leading-relaxed">Rules of Fasting in Ramadan</h4>
+        <p class="text-gray-600 text-sm mb-4 line-clamp-2">A comprehensive guide to the rulings of fasting from dawn to sunset and what breaks the fast...</p>
+        <div class="flex items-center justify-between">
+         <div class="flex items-center gap-2">
+          <div class="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center text-sm">
+           👤
+          </div><span class="text-sm text-gray-600">Dr. Ahmed Ali</span>
+         </div><button class="text-teal-700 hover:text-teal-800 font-medium text-sm flex items-center gap-1"> Read More 
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+          </svg></button>
+        </div>
+       </div>
+      </article><!-- Article Card 3 -->
+      <article class="card-hover bg-white rounded-2xl overflow-hidden shadow-sm">
+       <div class="h-48 bg-gradient-to-br from-purple-500 to-purple-700 flex items-center justify-center">
+        <svg class="w-16 h-16 text-white/80" viewbox="0 0 100 100" fill="currentColor"><circle cx="50" cy="50" r="35" fill="none" stroke="currentColor" stroke-width="4" /> <path d="M50 25 L50 50 L70 60" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" />
+        </svg>
+       </div>
+       <div class="p-6">
+        <div class="flex items-center gap-2 mb-3"><span class="px-3 py-1 bg-purple-100 text-purple-700 text-xs font-medium rounded-full">Spirituality</span> <span class="text-gray-400 text-sm">1 week ago</span>
+        </div>
+        <h4 class="text-lg font-bold text-gray-800 mb-3 leading-relaxed">How to Maintain Fajr Prayer in Congregation</h4>
+        <p class="text-gray-600 text-sm mb-4 line-clamp-2">Practical tips to help you wake up for Fajr prayer and maintain this important obligation...</p>
+        <div class="flex items-center justify-between">
+         <div class="flex items-center gap-2">
+          <div class="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center text-sm">
+           👤
+          </div><span class="text-sm text-gray-600">Professor Omar</span>
+         </div><button class="text-teal-700 hover:text-teal-800 font-medium text-sm flex items-center gap-1"> Read More 
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+          </svg></button>
+        </div>
+       </div>
+      </article>
+     </div>
+     <div class="sm:hidden mt-8 text-center"><button class="px-6 py-3 bg-teal-700 text-white rounded-xl hover:bg-teal-800 transition-colors"> View All Articles </button>
+     </div>
+    </div>
+   </section><!-- Video Section -->
+   <section class="py-16 bg-white">
+    <div class="max-w-7xl mx-auto px-4">
+     <div class="text-center mb-12">
+      <h3 class="text-3xl font-bold text-gray-800 heading-font mb-4">Video Library</h3>
+      <p class="text-gray-600 max-w-2xl mx-auto">Lectures and lessons from renowned scholars</p>
+     </div>
+     <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6"><!-- Video Card -->
+      <div class="card-hover bg-gray-100 rounded-2xl overflow-hidden">
+       <div class="relative h-40 bg-gradient-to-br from-gray-700 to-gray-900 flex items-center justify-center">
+        <div class="w-14 h-14 bg-white/20 backdrop-blur rounded-full flex items-center justify-center cursor-pointer hover:bg-white/30 transition-colors">
+         <svg class="w-6 h-6 text-white mr-[-2px]" fill="currentColor" viewbox="0 0 24 24"><path d="M8 5v14l11-7z" />
+         </svg>
+        </div><span class="absolute bottom-2 left-2 px-2 py-1 bg-black/70 text-white text-xs rounded">15:30</span>
+       </div>
+       <div class="p-4">
+        <h4 class="font-bold text-gray-800 text-sm mb-2 line-clamp-2">Tafsir of Surah Al-Fatiha - Part 1</h4>
+        <p class="text-gray-500 text-xs">Sheikh Abdullah</p>
+       </div>
+      </div>
+      <div class="card-hover bg-gray-100 rounded-2xl overflow-hidden">
+       <div class="relative h-40 bg-gradient-to-br from-teal-700 to-teal-900 flex items-center justify-center">
+        <div class="w-14 h-14 bg-white/20 backdrop-blur rounded-full flex items-center justify-center cursor-pointer hover:bg-white/30 transition-colors">
+         <svg class="w-6 h-6 text-white mr-[-2px]" fill="currentColor" viewbox="0 0 24 24"><path d="M8 5v14l11-7z" />
+         </svg>
+        </div><span class="absolute bottom-2 left-2 px-2 py-1 bg-black/70 text-white text-xs rounded">22:45</span>
+       </div>
+       <div class="p-4">
+        <h4 class="font-bold text-gray-800 text-sm mb-2 line-clamp-2">Lessons in the Prophetic Biography</h4>
+        <p class="text-gray-500 text-xs">Dr. Muhammad Said</p>
+       </div>
+      </div>
+      <div class="card-hover bg-gray-100 rounded-2xl overflow-hidden">
+       <div class="relative h-40 bg-gradient-to-br from-amber-600 to-amber-800 flex items-center justify-center">
+        <div class="w-14 h-14 bg-white/20 backdrop-blur rounded-full flex items-center justify-center cursor-pointer hover:bg-white/30 transition-colors">
+         <svg class="w-6 h-6 text-white mr-[-2px]" fill="currentColor" viewbox="0 0 24 24"><path d="M8 5v14l11-7z" />
+         </svg>
+        </div><span class="absolute bottom-2 left-2 px-2 py-1 bg-black/70 text-white text-xs rounded">18:20</span>
+       </div>
+       <div class="p-4">
+        <h4 class="font-bold text-gray-800 text-sm mb-2 line-clamp-2">Principles of Islamic Jurisprudence</h4>
+        <p class="text-gray-500 text-xs">Sheikh Ahmad</p>
+       </div>
+      </div>
+      <div class="card-hover bg-gray-100 rounded-2xl overflow-hidden">
+       <div class="relative h-40 bg-gradient-to-br from-purple-600 to-purple-800 flex items-center justify-center">
+        <div class="w-14 h-14 bg-white/20 backdrop-blur rounded-full flex items-center justify-center cursor-pointer hover:bg-white/30 transition-colors">
+         <svg class="w-6 h-6 text-white mr-[-2px]" fill="currentColor" viewbox="0 0 24 24"><path d="M8 5v14l11-7z" />
+         </svg>
+        </div><span class="absolute bottom-2 left-2 px-2 py-1 bg-black/70 text-white text-xs rounded">30:15</span>
+       </div>
+       <div class="p-4">
+        <h4 class="font-bold text-gray-800 text-sm mb-2 line-clamp-2">Purification of the Soul</h4>
+        <p class="text-gray-500 text-xs">Professor Maryam</p>
+       </div>
+      </div>
+     </div>
+    </div>
+   </section><!-- Ask Questions Section -->
+   <section id="ask-questions" class="py-16 bg-white">
+    <div class="max-w-4xl mx-auto px-4">
+     <div class="text-center mb-12">
+      <h3 class="text-3xl font-bold text-gray-800 heading-font mb-4">Ask Our Scholars</h3>
+      <p class="text-gray-600 max-w-2xl mx-auto">Have a question about Islam? Our panel of qualified scholars is here to help</p>
+     </div>
+     <div class="bg-gradient-to-br from-teal-50 to-blue-50 rounded-2xl p-8 md:p-12 border border-teal-100">
+      <form id="question-form" class="space-y-6"><!-- Name Field -->
+       <div><label for="question-name" class="block text-sm font-semibold text-gray-700 mb-2">Your Name</label> <input type="text" id="question-name" placeholder="Enter your full name" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent" required>
+       </div><!-- Email Field -->
+       <div><label for="question-email" class="block text-sm font-semibold text-gray-700 mb-2">Your Email</label> <input type="email" id="question-email" placeholder="Enter your email address" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent" required>
+       </div><!-- Category Field -->
+       <div><label for="question-category" class="block text-sm font-semibold text-gray-700 mb-2">Category</label> <select id="question-category" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent" required> <option value="">Select a category...</option> <option value="quran">Quran &amp; Tafsir</option> <option value="hadith">Hadith &amp; Sunnah</option> <option value="fiqh">Islamic Law (Fiqh)</option> <option value="aqeedah">Creed &amp; Belief (Aqeedah)</option> <option value="worship">Worship &amp; Rituals</option> <option value="family">Family &amp; Relationships</option> <option value="daily">Daily Life &amp; Etiquette</option> <option value="other">Other</option> </select>
+       </div><!-- Subject Field -->
+       <div><label for="question-subject" class="block text-sm font-semibold text-gray-700 mb-2">Subject</label> <input type="text" id="question-subject" placeholder="Brief subject of your question" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent" required>
+       </div><!-- Message Field -->
+       <div><label for="question-message" class="block text-sm font-semibold text-gray-700 mb-2">Your Question</label> <textarea id="question-message" placeholder="Please describe your question in detail..." rows="6" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent resize-none" required></textarea>
+       </div><!-- Submit Button --> <button type="submit" class="w-full px-8 py-4 bg-teal-700 hover:bg-teal-800 text-white rounded-xl font-bold transition-colors flex items-center justify-center gap-2">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+        </svg> Submit Your Question </button> <!-- Success Message -->
+       <p id="question-message-success" class="hidden text-center text-teal-700 font-medium p-4 bg-teal-50 rounded-lg border border-teal-200">✓ Thank you for your question! Our scholars will review and respond within 48-72 hours.</p>
+      </form><!-- Info Box -->
+      <div class="mt-8 pt-8 border-t border-teal-200">
+       <div class="grid md:grid-cols-3 gap-6">
+        <div class="text-center">
+         <div class="text-3xl font-bold text-teal-600 mb-2">
+          ⏱️
+         </div>
+         <h4 class="font-semibold text-gray-800 mb-1">Quick Response</h4>
+         <p class="text-sm text-gray-600">Answers within 48-72 hours</p>
+        </div>
+        <div class="text-center">
+         <div class="text-3xl font-bold text-teal-600 mb-2">
+          ✅
+         </div>
+         <h4 class="font-semibold text-gray-800 mb-1">Qualified Scholars</h4>
+         <p class="text-sm text-gray-600">From reputable institutions</p>
+        </div>
+        <div class="text-center">
+         <div class="text-3xl font-bold text-teal-600 mb-2">
+          🔒
+         </div>
+         <h4 class="font-semibold text-gray-800 mb-1">Private &amp; Confidential</h4>
+         <p class="text-sm text-gray-600">Your privacy is protected</p>
+        </div>
+       </div>
+      </div>
+     </div>
+    </div>
+   </section><!-- Answered Questions Section -->
+   <section id="answered-section" class="py-16 bg-gray-50">
+    <div class="max-w-4xl mx-auto px-4">
+     <div class="text-center mb-12">
+      <h3 class="text-3xl font-bold text-gray-800 heading-font mb-4">Answered Questions</h3>
+      <p class="text-gray-600 max-w-2xl mx-auto">Browse answers from our scholars to similar questions</p>
+     </div>
+     <div id="answered-questions-container" class="space-y-6"><!-- Answered questions will be populated here -->
+     </div>
+     <div id="answered-empty-state" class="text-center py-12">
+      <svg class="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+      <p class="text-gray-500 font-medium">No answered questions yet. Check back soon!</p>
+     </div>
+    </div>
+   </section><!-- Newsletter Section -->
+   <section class="py-16 gradient-overlay islamic-pattern">
+    <div class="max-w-3xl mx-auto px-4 text-center text-white">
+     <h3 class="text-3xl font-bold heading-font mb-4">Subscribe to Our Newsletter</h3>
+     <p class="text-lg opacity-90 mb-8">Get the latest articles and lessons delivered to your inbox</p>
+     <form id="newsletter-form" class="flex flex-col sm:flex-row gap-4 max-w-lg mx-auto"><input type="email" placeholder="Enter your email" class="flex-1 px-6 py-4 rounded-xl text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white/50" required> <button type="submit" class="px-8 py-4 bg-amber-500 hover:bg-amber-600 text-white rounded-xl font-bold transition-colors"> Subscribe </button>
+     </form>
+     <p id="newsletter-message" class="mt-4 text-sm opacity-80 hidden"></p>
+    </div>
+   </section><!-- Stats Section -->
+   <section class="py-16 bg-white">
+    <div class="max-w-7xl mx-auto px-4">
+     <div class="grid grid-cols-2 lg:grid-cols-4 gap-8">
+      <div class="text-center">
+       <div class="text-4xl lg:text-5xl font-bold text-teal-700 heading-font mb-2">
+        500+
+       </div>
+       <p class="text-gray-600">Published Articles</p>
+      </div>
+      <div class="text-center">
+       <div class="text-4xl lg:text-5xl font-bold text-teal-700 heading-font mb-2">
+        50+
+       </div>
+       <p class="text-gray-600">Scholars &amp; Thinkers</p>
+      </div>
+      <div class="text-center">
+       <div class="text-4xl lg:text-5xl font-bold text-teal-700 heading-font mb-2">
+        100K+
+       </div>
+       <p class="text-gray-600">Monthly Visitors</p>
+      </div>
+      <div class="text-center">
+       <div class="text-4xl lg:text-5xl font-bold text-teal-700 heading-font mb-2">
+        200+
+       </div>
+       <p class="text-gray-600">Video Lectures</p>
+      </div>
+     </div>
+    </div>
+   </section><!-- Footer -->
+   <footer class="bg-gray-900 text-white">
+    <div class="max-w-7xl mx-auto px-4 py-16">
+     <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-12"><!-- About -->
+      <div>
+       <div class="flex items-center gap-3 mb-6">
+        <div class="w-10 h-10 bg-teal-600 rounded-lg flex items-center justify-center">
+         <svg viewbox="0 0 100 100" class="w-6 h-6 text-white" fill="currentColor"><path d="M50 10 L90 50 L50 90 L10 50 Z M50 25 L75 50 L50 75 L25 50 Z" />
+         </svg>
+        </div><span class="font-bold heading-font text-lg">Islamic Portal</span>
+       </div>
+       <p class="text-gray-400 text-sm leading-relaxed mb-6">A comprehensive Islamic platform dedicated to spreading authentic Islamic knowledge and providing high-quality content to Muslims worldwide.</p>
+       <div class="flex gap-3"><a href="#" class="w-10 h-10 bg-gray-800 hover:bg-teal-600 rounded-lg flex items-center justify-center transition-colors"> <span class="text-lg">📘</span> </a> <a href="#" class="w-10 h-10 bg-gray-800 hover:bg-teal-600 rounded-lg flex items-center justify-center transition-colors"> <span class="text-lg">🐦</span> </a> <a href="#" class="w-10 h-10 bg-gray-800 hover:bg-teal-600 rounded-lg flex items-center justify-center transition-colors"> <span class="text-lg">📺</span> </a> <a href="#" class="w-10 h-10 bg-gray-800 hover:bg-teal-600 rounded-lg flex items-center justify-center transition-colors"> <span class="text-lg">📷</span> </a>
+       </div>
+      </div><!-- Quick Links -->
+      <div>
+       <h4 class="font-bold text-lg mb-6">Quick Links</h4>
+       <ul class="space-y-3">
+        <li><a href="#" class="text-gray-400 hover:text-teal-400 transition-colors">Home</a></li>
+        <li><a href="#" class="text-gray-400 hover:text-teal-400 transition-colors">Articles</a></li>
+        <li><a href="#" class="text-gray-400 hover:text-teal-400 transition-colors">Fatwas</a></li>
+        <li><a href="#" class="text-gray-400 hover:text-teal-400 transition-colors">Video Library</a></li>
+        <li><a href="#ask-questions" class="text-gray-400 hover:text-teal-400 transition-colors">Ask a Question</a></li>
+       </ul>
+      </div><!-- Categories -->
+      <div>
+       <h4 class="font-bold text-lg mb-6">Categories</h4>
+       <ul class="space-y-3">
+        <li><a href="#" class="text-gray-400 hover:text-teal-400 transition-colors">Quran</a></li>
+        <li><a href="#" class="text-gray-400 hover:text-teal-400 transition-colors">Hadith</a></li>
+        <li><a href="#" class="text-gray-400 hover:text-teal-400 transition-colors">Islamic Fiqh</a></li>
+        <li><a href="#" class="text-gray-400 hover:text-teal-400 transition-colors">Aqeedah</a></li>
+        <li><a href="#" class="text-gray-400 hover:text-teal-400 transition-colors">Seerah</a></li>
+       </ul>
+      </div><!-- Contact -->
+      <div>
+       <h4 class="font-bold text-lg mb-6">Get in Touch</h4>
+       <ul class="space-y-4">
+        <li class="flex items-center gap-3 text-gray-400"><span>📍</span> <span>Your City, Country</span></li>
+        <li class="flex items-center gap-3 text-gray-400"><span>📧</span> <span>contact@example.com</span></li>
+        <li class="flex items-center gap-3 text-gray-400"><span>📞</span> <span>+1 234 567 890</span></li>
+       </ul>
+      </div>
+     </div>
+    </div><!-- Bottom Bar -->
+    <div class="border-t border-gray-800">
+     <div class="max-w-7xl mx-auto px-4 py-6 flex flex-col sm:flex-row justify-between items-center gap-4">
+      <p class="text-gray-500 text-sm">© 2024 Islamic Knowledge Portal. All rights reserved.</p>
+      <div class="flex gap-6 text-sm"><a href="#" class="text-gray-500 hover:text-teal-400 transition-colors">Privacy Policy</a> <a href="#" class="text-gray-500 hover:text-teal-400 transition-colors">Terms &amp; Conditions</a>
+      </div>
+     </div>
+    </div>
+   </footer><!-- Admin Login Modal -->
+   <div id="admin-login-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+    <div class="bg-white rounded-2xl w-full max-w-md p-8">
+     <h2 class="text-2xl font-bold text-gray-800 heading-font mb-6 text-center">Admin Access</h2>
+     <form id="admin-login-form" class="space-y-4">
+      <div><label for="admin-password" class="block text-sm font-semibold text-gray-700 mb-2">Password</label> <input type="password" id="admin-password" placeholder="Enter admin password" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent" required>
+      </div>
+      <p id="admin-error" class="hidden text-sm text-red-600 text-center font-medium">Invalid password</p><button type="submit" class="w-full px-6 py-3 bg-teal-700 hover:bg-teal-800 text-white rounded-lg font-bold transition-colors"> Access Admin Panel </button>
+     </form>
+    </div>
+   </div><!-- Admin Panel Modal -->
+   <div id="admin-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+    <div class="bg-white rounded-2xl w-full max-w-4xl max-h-screen overflow-y-auto"><!-- Admin Header -->
+     <div class="sticky top-0 bg-gradient-to-r from-teal-700 to-teal-800 text-white p-6 flex justify-between items-center z-10">
+      <h2 class="text-2xl font-bold heading-font">Admin Panel - Answer Questions</h2><button id="close-admin" class="p-2 hover:bg-white/20 rounded-lg transition-colors">
+       <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+       </svg></button>
+     </div><!-- Admin Content -->
+     <div class="p-6"><!-- Questions List -->
+      <div id="admin-questions-container" class="space-y-4"><!-- Questions will be populated here -->
+      </div><!-- Empty State -->
+      <div id="admin-empty-state" class="text-center py-12">
+       <svg class="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+       </svg>
+       <p class="text-gray-500 font-medium">No unanswered questions yet</p>
+      </div>
+     </div>
+    </div>
+   </div><!-- Search Modal -->
+   <div id="search-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+    <div class="bg-white rounded-2xl w-full max-w-2xl p-6">
+     <div class="flex items-center gap-4 mb-4">
+      <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+      </svg><input type="text" id="search-input" placeholder="Search the site..." class="flex-1 text-lg outline-none"> <button id="close-search" class="p-2 hover:bg-gray-100 rounded-lg">
+       <svg class="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+       </svg></button>
+     </div>
+     <div class="border-t pt-4">
+      <p class="text-sm text-gray-500 mb-3">Popular searches:</p>
+      <div class="flex flex-wrap gap-2"><span class="px-3 py-1 bg-gray-100 text-gray-600 rounded-full text-sm cursor-pointer hover:bg-teal-100 hover:text-teal-700">Quran Tafsir</span> <span class="px-3 py-1 bg-gray-100 text-gray-600 rounded-full text-sm cursor-pointer hover:bg-teal-100 hover:text-teal-700">Prayer Rules</span> <span class="px-3 py-1 bg-gray-100 text-gray-600 rounded-full text-sm cursor-pointer hover:bg-teal-100 hover:text-teal-700">Sahih Bukhari</span> <span class="px-3 py-1 bg-gray-100 text-gray-600 rounded-full text-sm cursor-pointer hover:bg-teal-100 hover:text-teal-700">Prophet's Life</span>
+      </div>
+     </div>
+    </div>
+   </div>
+  </div>
+  <script>
+    // Data storage
+    let submittedQuestions = [];
+    let answeredQuestions = [];
+    
+    // Default configuration
+    const defaultConfig = {
+      site_title: 'Islamic Portal',
+      hero_title: 'Light of Knowledge',
+      hero_subtitle: 'A comprehensive platform for authentic Islamic content from scholars and thinkers',
+      primary_color: '#0d9488',
+      secondary_color: '#f5f5f4',
+      text_color: '#1f2937',
+      accent_color: '#f59e0b',
+      font_family: 'Inter',
+      font_size: 16
+    };
+    
+    let config = { ...defaultConfig };
+    
+    // Initialize Element SDK
+    if (window.elementSdk) {
+      window.elementSdk.init({
+        defaultConfig,
+        onConfigChange: async (newConfig) => {
+          config = { ...defaultConfig, ...newConfig };
+          
+          // Update site title
+          const siteTitleEl = document.getElementById('site-title');
+          if (siteTitleEl) siteTitleEl.textContent = config.site_title || defaultConfig.site_title;
+          
+          // Update hero title
+          const heroTitleEl = document.getElementById('hero-title');
+          if (heroTitleEl) heroTitleEl.textContent = config.hero_title || defaultConfig.hero_title;
+          
+          // Update hero subtitle
+          const heroSubtitleEl = document.getElementById('hero-subtitle');
+          if (heroSubtitleEl) heroSubtitleEl.textContent = config.hero_subtitle || defaultConfig.hero_subtitle;
+          
+          // Update colors
+          const primaryColor = config.primary_color || defaultConfig.primary_color;
+          const textColor = config.text_color || defaultConfig.text_color;
+          
+          // Apply font
+          const fontFamily = config.font_family || defaultConfig.font_family;
+          document.body.style.fontFamily = `${fontFamily}, 'Playfair Display', sans-serif`;
+          
+          // Apply font size
+          const fontSize = config.font_size || defaultConfig.font_size;
+          document.body.style.fontSize = `${fontSize}px`;
+        },
+        mapToCapabilities: (config) => ({
+          recolorables: [
+            {
+              get: () => config.primary_color || defaultConfig.primary_color,
+              set: (value) => {
+                config.primary_color = value;
+                window.elementSdk.setConfig({ primary_color: value });
+              }
+            },
+            {
+              get: () => config.secondary_color || defaultConfig.secondary_color,
+              set: (value) => {
+                config.secondary_color = value;
+                window.elementSdk.setConfig({ secondary_color: value });
+              }
+            },
+            {
+              get: () => config.text_color || defaultConfig.text_color,
+              set: (value) => {
+                config.text_color = value;
+                window.elementSdk.setConfig({ text_color: value });
+              }
+            },
+            {
+              get: () => config.accent_color || defaultConfig.accent_color,
+              set: (value) => {
+                config.accent_color = value;
+                window.elementSdk.setConfig({ accent_color: value });
+              }
+            }
+          ],
+          borderables: [],
+          fontEditable: {
+            get: () => config.font_family || defaultConfig.font_family,
+            set: (value) => {
+              config.font_family = value;
+              window.elementSdk.setConfig({ font_family: value });
+            }
+          },
+          fontSizeable: {
+            get: () => config.font_size || defaultConfig.font_size,
+            set: (value) => {
+              config.font_size = value;
+              window.elementSdk.setConfig({ font_size: value });
+            }
+          }
+        }),
+        mapToEditPanelValues: (config) => new Map([
+          ['site_title', config.site_title || defaultConfig.site_title],
+          ['hero_title', config.hero_title || defaultConfig.hero_title],
+          ['hero_subtitle', config.hero_subtitle || defaultConfig.hero_subtitle]
+        ])
+      });
+    }
+    
+    // Admin button
+    const adminBtn = document.getElementById('admin-btn');
+    const adminLoginModal = document.getElementById('admin-login-modal');
+    const adminLoginForm = document.getElementById('admin-login-form');
+    const adminPassword = document.getElementById('admin-password');
+    const adminError = document.getElementById('admin-error');
+    const adminModal = document.getElementById('admin-modal');
+    const closeAdmin = document.getElementById('close-admin');
+    
+    adminBtn.addEventListener('click', () => {
+      adminLoginModal.classList.remove('hidden');
+      adminLoginModal.classList.add('flex');
+      adminPassword.value = '';
+      adminError.classList.add('hidden');
+    });
+    
+    adminLoginForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      if (adminPassword.value === 'sabith') {
+        adminLoginModal.classList.add('hidden');
+        adminLoginModal.classList.remove('flex');
+        showAdminPanel();
+      } else {
+        adminError.classList.remove('hidden');
+        adminPassword.value = '';
+      }
+    });
+    
+    closeAdmin.addEventListener('click', () => {
+      adminModal.classList.add('hidden');
+      adminModal.classList.remove('flex');
+    });
+    
+    function showAdminPanel() {
+      adminModal.classList.remove('hidden');
+      adminModal.classList.add('flex');
+      updateAdminQuestions();
+    }
+    
+    function updateAdminQuestions() {
+      const container = document.getElementById('admin-questions-container');
+      const emptyState = document.getElementById('admin-empty-state');
+      
+      if (submittedQuestions.length === 0) {
+        container.innerHTML = '';
+        emptyState.classList.remove('hidden');
+        return;
+      }
+      
+      emptyState.classList.add('hidden');
+      container.innerHTML = submittedQuestions.map((q, idx) => `
+        <div class="bg-white border border-gray-200 rounded-lg p-6">
+          <div class="mb-4">
+            <h4 class="font-bold text-lg text-gray-800 mb-2">${q.subject}</h4>
+            <div class="flex flex-wrap gap-2 mb-3">
+              <span class="px-3 py-1 bg-gray-100 text-gray-700 text-xs font-medium rounded-full">${q.category}</span>
+              <span class="px-3 py-1 bg-blue-100 text-blue-700 text-xs font-medium rounded-full">From: ${q.name}</span>
+            </div>
+            <p class="text-gray-600 mb-2"><strong>Email:</strong> ${q.email}</p>
+            <p class="text-gray-700 bg-gray-50 p-3 rounded mb-4"><strong>Question:</strong> ${q.question}</p>
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-2">Your Answer</label>
+            <textarea 
+              id="answer-${idx}"
+              placeholder="Type your answer here..." 
+              rows="4"
+              class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 resize-none"
+            ></textarea>
+            <button 
+              onclick="submitAnswer(${idx})" 
+              class="mt-3 px-6 py-2 bg-teal-700 hover:bg-teal-800 text-white rounded-lg font-bold transition-colors"
+            >
+              Publish Answer
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+    
+    window.submitAnswer = function(idx) {
+      const answerText = document.getElementById(`answer-${idx}`).value.trim();
+      if (!answerText) {
+        alert('Please type an answer');
+        return;
+      }
+      
+      const question = submittedQuestions[idx];
+      answeredQuestions.push({
+        ...question,
+        answer: answerText
+      });
+      
+      submittedQuestions.splice(idx, 1);
+      updateAdminQuestions();
+      updateAnsweredQuestionsDisplay();
+    };
+    
+    function updateAnsweredQuestionsDisplay() {
+      const container = document.getElementById('answered-questions-container');
+      const emptyState = document.getElementById('answered-empty-state');
+      
+      if (answeredQuestions.length === 0) {
+        container.innerHTML = '';
+        emptyState.classList.remove('hidden');
+        return;
+      }
+      
+      emptyState.classList.add('hidden');
+      container.innerHTML = answeredQuestions.map(q => `
+        <div class="bg-white rounded-xl shadow-md overflow-hidden border-l-4 border-teal-600">
+          <div class="p-6">
+            <div class="flex items-start justify-between mb-4">
+              <div>
+                <h3 class="text-xl font-bold text-gray-800 mb-2">${q.subject}</h3>
+                <div class="flex flex-wrap gap-2">
+                  <span class="px-3 py-1 bg-teal-100 text-teal-700 text-xs font-medium rounded-full">📌 ${q.category}</span>
+                  <span class="px-3 py-1 bg-gray-100 text-gray-700 text-xs font-medium rounded-full">👤 ${q.name}</span>
+                </div>
+              </div>
+            </div>
+            <div class="mb-4">
+              <p class="text-gray-600 mb-3"><strong>Question:</strong></p>
+              <p class="text-gray-700 bg-gray-50 p-3 rounded italic">"${q.question}"</p>
+            </div>
+            <div>
+              <p class="text-gray-600 mb-2"><strong>Answer from Scholar:</strong></p>
+              <p class="text-gray-800 leading-relaxed bg-blue-50 p-3 rounded">${q.answer}</p>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+    
+    // Mobile menu toggle
+    const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    
+    mobileMenuBtn.addEventListener('click', () => {
+      mobileMenu.classList.toggle('open');
+    });
+    
+    // Mobile dropdown toggles
+    const dropdownToggles = [
+      { btn: 'articles-toggle', menu: 'articles-submenu' },
+      { btn: 'scholars-toggle', menu: 'scholars-submenu' },
+      { btn: 'fatwas-toggle', menu: 'fatwas-submenu' },
+      { btn: 'media-toggle', menu: 'media-submenu' }
+    ];
+    
+    dropdownToggles.forEach(({ btn, menu }) => {
+      const button = document.getElementById(btn);
+      const submenu = document.getElementById(menu);
+      if (button && submenu) {
+        button.addEventListener('click', () => {
+          submenu.classList.toggle('open');
+        });
+      }
+    });
+    
+    // Search modal
+    const searchBtn = document.getElementById('search-btn');
+    const searchModal = document.getElementById('search-modal');
+    const closeSearch = document.getElementById('close-search');
+    const searchInput = document.getElementById('search-input');
+    
+    searchBtn.addEventListener('click', () => {
+      searchModal.classList.remove('hidden');
+      searchModal.classList.add('flex');
+      searchInput.focus();
+    });
+    
+    closeSearch.addEventListener('click', () => {
+      searchModal.classList.add('hidden');
+      searchModal.classList.remove('flex');
+    });
+    
+    searchModal.addEventListener('click', (e) => {
+      if (e.target === searchModal) {
+        searchModal.classList.add('hidden');
+        searchModal.classList.remove('flex');
+      }
+    });
+    
+    // Question form
+    const questionForm = document.getElementById('question-form');
+    const questionMessageSuccess = document.getElementById('question-message-success');
+    
+    if (questionForm) {
+      questionForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        
+        const name = document.getElementById('question-name').value;
+        const email = document.getElementById('question-email').value;
+        const category = document.getElementById('question-category').value;
+        const subject = document.getElementById('question-subject').value;
+        const message = document.getElementById('question-message').value;
+        
+        submittedQuestions.push({
+          name,
+          email,
+          category,
+          subject,
+          question: message
+        });
+        
+        // Show success message
+        questionMessageSuccess.classList.remove('hidden');
+        
+        // Reset form
+        questionForm.reset();
+        
+        // Hide success message after 8 seconds
+        setTimeout(() => {
+          questionMessageSuccess.classList.add('hidden');
+        }, 8000);
+        
+        // Scroll to success message
+        questionMessageSuccess.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      });
+    }
+    
+    // Newsletter form
+    const newsletterForm = document.getElementById('newsletter-form');
+    const newsletterMessage = document.getElementById('newsletter-message');
+    
+    newsletterForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const email = newsletterForm.querySelector('input[type="email"]').value;
+      
+      newsletterMessage.textContent = 'Thank you for subscribing! Check your email for updates.';
+      newsletterMessage.classList.remove('hidden');
+      newsletterForm.reset();
+      
+      setTimeout(() => {
+        newsletterMessage.classList.add('hidden');
+      }, 5000);
+    });
+    
+    // Close mobile menu when clicking navigation links
+    const mobileNavLinks = mobileMenu.querySelectorAll('a');
+    mobileNavLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        mobileMenu.classList.remove('open');
+      });
+    });
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9cd45eee13597edf',t:'MTc3MDk4NjE4MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
